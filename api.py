@@ -6,7 +6,7 @@ import flask
 from flasgger import Swagger
 from flask import Flask, request, jsonify, Response
 from flask_cors import CORS
-from liblinear.predict import sentiment
+from predict import classify
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -38,7 +38,7 @@ def notfound(error):
     return resp
 
 
-@application.route('/v1/sentiment', methods=['POST'])
+@application.route('/v1/classify', methods=['POST'])
 def sentiment_classification():
     """Run sentiment classification given text.
         ---
@@ -66,12 +66,12 @@ def sentiment_classification():
           40x:
             description: Client error
           200:
-            description: Sentiment Classification Response
+            description: Text Classification Response
             examples:
                           [
 {
   "status": "success",
-  "sentiment": "1"
+  "category": "good"
 },
 {
   "status": "error",
@@ -86,12 +86,12 @@ def sentiment_classification():
     if text is None:
         return Response("No text provided.", status=400)
     else:
-        label = sentiment(text)
+        label = classify(text)
         return flask.jsonify({"status": "success", "label": label})
 
 
-@application.route('/v1/sentiment/categories', methods=['GET'])
-def sentiment_categories():
+@application.route('/v1/classify/categories', methods=['GET'])
+def categories():
     """Possible sentiment categories.
         ---
         definitions:
@@ -108,12 +108,11 @@ def sentiment_categories():
             examples:
                           [
 {
-  "categories": [1,2,3],
-  "sentiment": "1"
+  "categories": [1,2,3]
 }
 ]
         """
-    return flask.jsonify({"categories": list(range(1,6))})
+    return flask.jsonify({"categories": ["good", "controversial", "bad"]})
 
 
 if __name__ == '__main__':

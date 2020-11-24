@@ -1,26 +1,23 @@
-from sklearn
+import sklearn
+import pickle
+import os
 
-TOKENIZER_FILE_LOCATION = os.environ.get('DICT_FILE', "./models/")
-MODEL_LOCATION = os.environ.get('MODEL_FILE',"./models/")
+VECTORIZER_LOCATION = os.environ.get('VECTORIZER_LOCATION', "./models/logistic/logistic_cv.p")
+TFIDF_LOCATION = os.environ.get('TFIDF_LOCATION', "./models/logistic/logistic_tfidf.p")
+MODEL_LOCATION = os.environ.get('MODEL_LOCATION',"./models/logistic/best_logistic.p")
 
+with open(VECTORIZER_LOCATION, 'rb') as f:
+    cv = pickle.load(f)
 
-# a very simple tokenizer that splits on white space and gets rid of some punctuation
-def tokenize(text):
-    # for each token in the text (the result of text.split(),
-    # apply a function that strips punctuation and converts to lower case.
-    tokens = map(lambda x: x.strip(',.&').lower(), text.split())
-    # get rid of empty tokens
-    tokens = list(filter(None, tokens))
-    return tokens
+with open(TFIDF_LOCATION, 'rb') as f:
+    tv = pickle.load(f)
 
-def sentiment(text):
-    tokens = tokenize(text)
-    if len(tokens):
-        bow = YELP_DICTIONARY.doc2bow(tokens)
-        x = {}
-        for indx, v in YELP_TFIDF[bow]:
-            x[indx + 1] = v
-        x0, max_idx = gen_feature_nodearray(x)
-        label = liblinear.predict(YELP_MODEL, x0)
+with open(MODEL_LOCATION, 'rb') as f:
+    model = pickle.load(f)
+
+def classify(text):
+    try:
+        label = model.predict(tv.transform(cv.transform([text])))[0]
         return label
-    return None
+    except Exception as e:
+        return str(e)

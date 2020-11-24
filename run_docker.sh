@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 # create a docker image
-docker build -t sentiment-classification-docker-image -f Dockerfile .
+docker build -t ud_classify -f Dockerfile .
 # create a docker container
-docker container run --publish 5001:5001  sentiment-classification-docker-image
+docker container run --publish 5001:5001  ud_classify
