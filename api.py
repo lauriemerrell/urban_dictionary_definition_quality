@@ -40,7 +40,7 @@ def notfound(error):
 
 @application.route('/v1/classify', methods=['POST'])
 def sentiment_classification():
-    """Run sentiment classification given text.
+    """Run definition quality classification given text.
         ---
         parameters:
           - name: body
@@ -92,7 +92,7 @@ def sentiment_classification():
 
 @application.route('/v1/classify/categories', methods=['GET'])
 def categories():
-    """Possible sentiment categories.
+    """Possible quality categories.
         ---
         definitions:
           CategoriestResponse:
